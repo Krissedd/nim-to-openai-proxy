@@ -137,7 +137,7 @@ function safeTimingEqual(a, b) {
 }
 
 app.use((req, res, next) => {
-  if (req.method === 'GET' && (req.path === '/health' || req.path === '/v1/models' || req.path === '/')) {
+  if (req.path === '/health' || req.path === '/v1/models' || req.path === '/') {
     return next();
   }
 
@@ -429,7 +429,7 @@ app.get('/v1/models', async (req, res) => {
   }
 });
 
-const handleChatCompletions = async (req, res) => {
+app.post('/v1/chat/completions', async (req, res) => {
   let streamEndedCleanly = false;
   let upstreamStream = null;
 
@@ -764,10 +764,7 @@ const handleChatCompletions = async (req, res) => {
       upstreamStream.destroy();
     }
   }
-};
-
-app.post('/v1/chat/completions', handleChatCompletions);
-app.post('/', handleChatCompletions); // alias for proxies (e.g. LoreBary) that drop the path
+});
 
 app.use((req, res) => {
   res.status(404).json({
